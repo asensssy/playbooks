@@ -1,3 +1,33 @@
+main.yml file location
+
+# /opt/ansible/ansible-infra/roles/users-local-dxc/vars/main.yml
+#  ~/ansible-infra/roles/users-local-dxc/vars/main.yml
+
+
+These two lines indicate the location of the main.yml file which contains variables for the users-local-dxc Ansible role. The first line indicates an absolute path while the second line indicates a relative path from the user's home directory (~).
+
+
+playbook invocation
+
+ # ansible-playbook -i lxwas219i, ~/ansible-infra/srv_users.yml --tags "logger,users-local-dxc" --extra-vars "srv_logger_order_number=CRQ119425" --ask-pass
+
+
+This is the command used to invoke the srv_users.yml playbook with various options:
+	• -i specifies the inventory file to use, in this case, lxwas219i.
+	• --tags specifies the tags of the tasks to run, in this case, logger and users-local-dxc.
+	• --extra-vars specifies extra variables to pass to the playbook, in this case, srv_logger_order_number=CRQ82136.
+	• --ask-pass prompts the user for a password to use for SSH authentication.
+
+
+inventory file location
+
+# /home/ae031716/ansible-infra/inventory/srv_inventory_dmz_20220419
+
+
+This line indicates the location of the inventory file used for the playbook. The inventory file contains a list of hosts and their connection information, such as IP addresses and SSH keys.
+
+
+
 [ae031716@lxans401p ~]$ .local/bin/ansible-playbook -i lxdyn403t,lxdyn442p, ~/ansible-infra/srv_users.yml --tags "loger,users-local-dxc" --extra-vars "srv_logger_order_number=CRQ216125" -k^C
 [ae031716@lxans401p ~]$ cat ansible-infra/roles/users-local-dxc/tasks/main.yml                                                                                               ---
 # tasks file for users-local-dxc
