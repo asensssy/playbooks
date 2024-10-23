@@ -1,0 +1,33 @@
+[ae031716@lxans401p ~]$ .local/bin/ansible-playbook -i lxdyn403t,lxdyn442p, ~/ansible-infra/srv_users.yml --tags "loger,users-local-dxc" --extra-vars "srv_logger_order_number=CRQ216125" -k^C
+[ae031716@lxans401p ~]$ cat ansible-infra/roles/users-local-dxc/tasks/main.yml                                                                                               ---
+# tasks file for users-local-dxc
+
+- name: create group
+  become: true
+  group:
+    name: "{{ item.key }}"
+    gid: "{{ item.value.srv_users_local_dxc_uid }}"
+    state: present
+  with_dict: "{{ srv_users_local_dxc }}"
+
+- name: create user
+  become: true
+  user:
+    name: "{{ item.key }}"
+    comment: "{{ item.value.srv_users_local_dxc_comment }}"
+    uid: "{{ item.value.srv_users_local_dxc_uid }}"
+    home: '/home/{{ item.key }}'
+    shell: /bin/bash
+    group: "{{ item.value.srv_users_local_dxc_group }}"
+    groups: "{{ item.value.srv_users_local_dxc_groups }}"
+    append: yes
+    state: present
+  with_dict: "{{ srv_users_local_dxc }}"
+
+- name: set password for user
+  become: true
+  user:
+    name: "{{ item.key }}"
+    password: "{{ item.value.srv_users_local_dxc_password }}"
+  with_dict: "{{ srv_users_local_dxc }}"
+  when: (item.value.srv_users_local_dxc_password is defined)
