@@ -1,0 +1,50 @@
+# Add a static route to a single host
+# ansible-playbook: Execute the playbook
+# -i lxapp404t,: Specify the target host
+# ~/ansible-infra/playbooks/system/linux.os.routing.yml: Path to the playbook
+# --extra-vars: Provide additional variables
+# Task=add: Add the static route
+ansible-playbook -i lxapp404t, ~/ansible-infra/playbooks/system/linux.os.routing.yml --extra-vars "srv_logger_order_number=CRQ65467 Target=10.131.33.24 Gateway=10.37.0.1 Netmask=255.255.255.255 Task=add"
+
+# Delete a static route
+# Task=del: Remove the static route
+ansible-playbook -i lxapp404t,  ~/ansible-infra/playbooks/system/linux.os.routing.yml --extra-vars "srv_logger_order_number=CRQ65467 Target=10.131.33.24 Gateway=10.37.0.1 Netmask=255.255.255.255 Task=del"
+
+# Add a static route to a subnet
+# Netmask=255.255.255.0: Specify the subnet mask
+ansible-playbook -i lxapp404t,  ~/ansible-infra/playbooks/system/linux.os.routing.yml --extra-vars "srv_logger_order_number=CRQ65467 Target=10.131.33.24 Gateway=10.37.0.1 Netmask=255.255.255.0 Task=add"
+
+# Post check: Verify the route configuration
+ansible all -i lxihs514i,lxihs221i, -m shell -a "ip r | grep -i '10.135.41.219'"
+
+# Playbook tasks
+
+# Add a static route
+- name: configure static route
+  net_static_route:
+    prefix: 192.168.2.0
+    mask: 255.255.255.0
+    next_hop: 10.0.0.1
+
+# Remove a static route
+- name: remove configuration
+  net_static_route:
+    prefix: 192.168.2.0
+    mask: 255.255.255.0
+    next_hop: 10.0.0.1
+    state: absent
+
+# Add multiple static routes using aggregate
+- name: configure aggregates of static routes
+  net_static_route:
+    aggregate:
+      - { prefix: 192.168.2.0, mask 255.255.255.0, next_hop: 10.0.0.1 }
+      - { prefix: 192.168.3.0, mask 255.255.255.0, next_hop: 10.0.2.1 }
+
+# Remove multiple static routes using aggregate
+- name: Remove static route collections
+  net_static_route:
+    aggregate:
+      - { prefix: 172.24.1.0/24, next_hop: 192.168.42.64 }
+      - { prefix: 172.24.3.0/24, next_hop: 192.168.42.64 }
+    state: absent
